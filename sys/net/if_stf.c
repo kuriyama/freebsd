@@ -276,7 +276,6 @@ stf_clone_create(struct if_clone *ifc, char *name, size_t len, caddr_t params)
 		free(sc, M_STF);
 		return (ENOMEM);
 	}
-	if_printf(ipf, "kuri: stf_clone_create()\n");
 	STF_LOCK_INIT(sc);
 	ifp->if_softc = sc;
 	error = ifc_name2unit(name, &unit);
