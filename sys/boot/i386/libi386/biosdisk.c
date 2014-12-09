@@ -481,6 +481,14 @@ bd_chs_io(struct disk_devdesc *dev, daddr_t dblk, int blks, caddr_t dest,
     return (V86_CY(v86.efl));
 }
 
+static void
+bd_io_workaround(struct disk_devdesc *dev)
+{
+    unsigned char	buf[1024 * 8];
+
+    bd_edd_io(dev, 0xffffffff, 1, (caddr_t)buf, 0);
+}
+
 static int
 bd_io(struct disk_devdesc *dev, daddr_t dblk, int blks, caddr_t dest, int write)
 {
@@ -493,6 +501,12 @@ bd_io(struct disk_devdesc *dev, daddr_t dblk, int blks, caddr_t dest, int write)
 
     resid = blks;
     p = dest;
+
+    /* Workaround for HP ProLiant BIOS problem. */
+    if (dblk >= 0x100000000) {
+	printf("Read extra sector to work around HP BIOS problem.\n");
+	bd_io_workaround(dev);
+    }
 
     /* Decide whether we have to bounce */
     if (VTOP(dest) >> 20 != 0 || (BD(dev).bd_unit < 0x80 &&
