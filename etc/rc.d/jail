@@ -387,7 +387,7 @@ jail_config()
 	_ALL)	return ;;
 	esac
 	for _j in $@; do
-		_j=$(echo $_j | tr /. _)
+		_j=$(echo $_j | tr /.- _)
 		if parse_options $_j; then 
 			echo "$_j: parameters are in $_conf."
 		fi
@@ -403,7 +403,7 @@ jail_console()
 	0:*|1:_ALL)	err 3 "Specify a jail name." ;;
 	1:*)		;;
 	esac
-	_j=$(echo $1 | tr /. _)
+	_j=$(echo $1 | tr /.- _)
 	shift
 	case $# in
 	0)	eval _cmd=\${jail_${_j}_consolecmd:-$jail_consolecmd} ;;
@@ -420,7 +420,7 @@ jail_status()
 
 jail_start()
 {
-	local _j _jid _jl
+	local _j _jid _jl _jo
 
 	if [ $# = 0 ]; then
 		return
@@ -453,13 +453,14 @@ jail_start()
 		#
 		_jl=
 		for _j in $@; do
-			_j=$(echo $_j | tr /. _)
+			_jo="$_j"
+			_jt=$(echo $_j | tr /.- _)
 			parse_options $_j || continue
 
 			_jl="$_jl $_j"
 			eval rc_flags=\${jail_${_j}_flags:-$jail_flags}
 			eval command=\${jail_${_j}_program:-$jail_program}
-			command_args="-i -f $_conf -c $_j"
+			command_args="-i -f $_conf -c $_jo"
 			$command $rc_flags $command_args \
 			    >/dev/null 2>&1 </dev/null &
 		done
@@ -479,17 +480,18 @@ jail_start()
 		# Start jails one-by-one when jail_parallel_start is NO.
 		#
 		for _j in $@; do
-			_j=$(echo $_j | tr /. _)
+			_jo="$_j"
+			_j=$(echo $_j | tr /.- _)
 			parse_options $_j || continue
 
 			eval rc_flags=\${jail_${_j}_flags:-$jail_flags}
 			eval command=\${jail_${_j}_program:-$jail_program}
-			command_args="-i -f $_conf -c $_j"
+			command_args="-i -f $_conf -c $_jo"
 			_tmp=`mktemp -t jail` || exit 3
 			if $command $rc_flags $command_args \
 			    >> $_tmp 2>&1 </dev/null; then
-				echo -n " ${_hostname:-${_j}}"
-				_jid=$($jail_jls -j $_j jid)
+				echo -n " ${_hostname:-${_jo}}"
+				_jid=$($jail_jls -j $_jo jid)
 				echo $_jid > /var/run/jail_${_j}.id
 			else
 				rm -f /var/run/jail_${_j}.id
@@ -505,7 +507,7 @@ jail_start()
 
 jail_stop()
 {
-	local _j
+	local _j _jo
 
 	if [ $# = 0 ]; then
 		return
@@ -532,16 +534,17 @@ jail_stop()
 	;;
 	esac
 	for _j in $@; do
-		_j=$(echo $_j | tr /. _)
+		_jo="$_j"
+		_j=$(echo $_j | tr /.- _)
 		parse_options $_j || continue
-		if ! $jail_jls -j $_j > /dev/null 2>&1; then
+		if ! $jail_jls -j $_jo > /dev/null 2>&1; then
 			continue
 		fi
 		eval command=\${jail_${_j}_program:-$jail_program}
 		echo -n " ${_hostname:-${_j}}"
 		_tmp=`mktemp -t jail` || exit 3
-		$command -q -f $_conf -r $_j >> $_tmp 2>&1
-		if $jail_jls -j $_j > /dev/null 2>&1; then
+		$command -q -f $_conf -r $_jo >> $_tmp 2>&1
+		if $jail_jls -j $_jo > /dev/null 2>&1; then
 			tail -1 $_tmp
 		else
 			rm -f /var/run/jail_${_j}.id
