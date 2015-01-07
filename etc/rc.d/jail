@@ -439,7 +439,7 @@ jail_start()
 				echo $1 > /var/run/jail_$2.id
 			done
 		else
-			tail -1 $_tmp
+			cat $_tmp
 		fi
 		rm -f $_tmp
 		echo '.'
