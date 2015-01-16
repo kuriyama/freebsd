@@ -102,7 +102,7 @@ char *SHA_version="SHA part of SSLeay 0.9.0b 11-Oct-1998";
 #define	M_p_c2nl_p	p_c2nl_p
 #define	M_nl2c		nl2c
 
-void SHA_Init(c)
+int SHA_Init(c)
 SHA_CTX *c;
 	{
 	c->h0=INIT_DATA_h0;
@@ -113,9 +113,10 @@ SHA_CTX *c;
 	c->Nl=0;
 	c->Nh=0;
 	c->num=0;
+	return 1;
 	}
 
-void SHA_Update(c, in, len)
+int SHA_Update(c, in, len)
 SHA_CTX *c;
 const void *in;
 size_t len;
@@ -125,7 +126,7 @@ size_t len;
 	u_int32_t l;
 	const unsigned char *data = in;
 
-	if (len == 0) return;
+	if (len == 0) return 1;
 
 	l=(c->Nl+(len<<3))&0xffffffffL;
 	if (l < c->Nl) /* overflow */
@@ -179,7 +180,7 @@ size_t len;
 					p[sw]=l;
 					}
 				}
-			return;
+			return 1;
 			}
 		}
 	/* We can only do the following code for assember, the reason
@@ -247,6 +248,7 @@ size_t len;
 		{ M_c2nl(data,l); p[sw]=l; }
 	M_c2nl_p(data,l,ec);
 	p[sw]=l;
+	return 1;
 	}
 
 void SHA_Transform(c,b)
@@ -405,7 +407,7 @@ int num;
 		}
 	}
 
-void SHA_Final(md, c)
+int SHA_Final(md, c)
 unsigned char *md;
 SHA_CTX *c;
 	{
@@ -450,5 +452,6 @@ SHA_CTX *c;
 	 * but I'm not worried :-) */
 	c->num=0;
 /*	memset((char *)&c,0,sizeof(c));*/
+	return 1;
 	}
 

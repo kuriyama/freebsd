@@ -33,11 +33,11 @@
 .Sh SYNOPSIS
 .In sys/types.h
 .In sha.h
-.Ft void
+.Ft int
 .Fn SHA_Init "SHA_CTX *context"
-.Ft void
+.Ft int
 .Fn SHA_Update "SHA_CTX *context" "const unsigned char *data" "size_t len"
-.Ft void
+.Ft int
 .Fn SHA_Final "unsigned char digest[20]" "SHA_CTX *context"
 .Ft "char *"
 .Fn SHA_End "SHA_CTX *context" "char *buf"
@@ -47,11 +47,11 @@
 .Fn SHA_FileChunk "const char *filename" "char *buf" "off_t offset" "off_t length"
 .Ft "char *"
 .Fn SHA_Data "const unsigned char *data" "unsigned int len" "char *buf"
-.Ft void
+.Ft int
 .Fn SHA1_Init "SHA_CTX *context"
-.Ft void
+.Ft int
 .Fn SHA1_Update "SHA_CTX *context" "const unsigned char *data" "size_t len"
-.Ft void
+.Ft int
 .Fn SHA1_Final "unsigned char digest[20]" "SHA_CTX *context"
 .Ft "char *"
 .Fn SHA1_End "SHA_CTX *context" "char *buf"
@@ -153,6 +153,12 @@ after use.
 If the
 .Fa buf
 argument is non-null it must point to at least 41 characters of buffer space.
+.Sh RETURN VALUES
+.Fn SHA1_Init ,
+.Fn SHA1_Update
+and
+.Fn SHA1_Final
+return 1 for success, 0 otherwise.
 .Sh SEE ALSO
 .Xr md4 3 ,
 .Xr md5 3 ,

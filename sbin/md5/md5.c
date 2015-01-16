@@ -48,8 +48,8 @@ int sflag;
 unsigned char* checkAgainst;
 int	checksFailed;
 
-typedef void (DIGEST_Init)(void *);
-typedef void (DIGEST_Update)(void *, const unsigned char *, size_t);
+typedef int (DIGEST_Init)(void *);
+typedef int (DIGEST_Update)(void *, const unsigned char *, size_t);
 typedef char *(DIGEST_End)(void *, char *);
 
 extern const char *MD5TestOutput[MDTESTCOUNT];
@@ -69,7 +69,7 @@ typedef struct Algorithm_t {
 	char *(*File)(const char *, char *);
 } Algorithm_t;
 
-static void MD5_Update(MD5_CTX *, const unsigned char *, size_t);
+static int MD5_Update(MD5_CTX *, const unsigned char *, size_t);
 static void MDString(Algorithm_t *, const char *);
 static void MDTimeTrial(Algorithm_t *);
 static void MDTestSuite(Algorithm_t *);
@@ -109,10 +109,11 @@ struct Algorithm_t Algorithm[] = {
 		(DIGEST_End*)&RIPEMD160_End, &RIPEMD160_Data, &RIPEMD160_File }
 };
 
-static void
+static int
 MD5_Update(MD5_CTX *c, const unsigned char *data, size_t len)
 {
 	MD5Update(c, data, len);
+	return 1;
 }
 
 /* Main driver.

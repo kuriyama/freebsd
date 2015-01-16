@@ -88,7 +88,7 @@ void ripemd160_block_x86(RIPEMD160_CTX *c, const u_int32_t *p,int num);
 void ripemd160_block(RIPEMD160_CTX *c, const u_int32_t *p,int num);
 #endif
 
-void RIPEMD160_Init(c)
+int RIPEMD160_Init(c)
 RIPEMD160_CTX *c;
 	{
 	c->A=RIPEMD160_A;
@@ -99,9 +99,10 @@ RIPEMD160_CTX *c;
 	c->Nl=0;
 	c->Nh=0;
 	c->num=0;
+	return 1;
 	}
 
-void RIPEMD160_Update(c, in, len)
+int RIPEMD160_Update(c, in, len)
 RIPEMD160_CTX *c;
 const void *in;
 size_t len;
@@ -111,7 +112,7 @@ size_t len;
 	u_int32_t l;
 	const unsigned char *data = in;
 
-	if (len == 0) return;
+	if (len == 0) return 1;
 
 	l=(c->Nl+(len<<3))&0xffffffffL;
 	if (l < c->Nl) /* overflow */
@@ -167,7 +168,7 @@ size_t len;
 					p[sw]=l;
 					}
 				}
-			return;
+			return 1;
 			}
 		}
 	/* we now can process the input data in blocks of RIPEMD160_CBLOCK
@@ -231,6 +232,7 @@ size_t len;
 		*p=l;
 #endif
 		}
+	return 1;
 	}
 
 void RIPEMD160_Transform(c,b)
@@ -472,7 +474,7 @@ int num;
 	}
 #endif
 
-void RIPEMD160_Final(md, c)
+int RIPEMD160_Final(md, c)
 unsigned char *md;
 RIPEMD160_CTX *c;
 	{
@@ -527,6 +529,7 @@ RIPEMD160_CTX *c;
 	 * but I'm not worried :-) */
 	c->num=0;
 /*	memset((char *)&c,0,sizeof(c));*/
+	return 1;
 	}
 
 #ifdef undef

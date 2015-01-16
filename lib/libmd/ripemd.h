@@ -81,10 +81,10 @@ typedef struct RIPEMD160state_st {
 } RIPEMD160_CTX;
 
 __BEGIN_DECLS
-void	RIPEMD160_Init(RIPEMD160_CTX *c);
-void	RIPEMD160_Update(RIPEMD160_CTX *c, const void *data,
+int	RIPEMD160_Init(RIPEMD160_CTX *c);
+int	RIPEMD160_Update(RIPEMD160_CTX *c, const void *data,
 			 size_t len);
-void	RIPEMD160_Final(unsigned char *md, RIPEMD160_CTX *c);
+int	RIPEMD160_Final(unsigned char *md, RIPEMD160_CTX *c);
 char   *RIPEMD160_End(RIPEMD160_CTX *, char *);
 char   *RIPEMD160_File(const char *, char *);
 char   *RIPEMD160_FileChunk(const char *, char *, off_t, off_t);

@@ -26,11 +26,11 @@
 .Sh SYNOPSIS
 .In sys/types.h
 .In ripemd.h
-.Ft void
+.Ft int
 .Fn RIPEMD160_Init "RIPEMD160_CTX *context"
-.Ft void
+.Ft int
 .Fn RIPEMD160_Update "RIPEMD160_CTX *context" "const unsigned char *data" "unsigned int len"
-.Ft void
+.Ft int
 .Fn RIPEMD160_Final "unsigned char digest[20]" "RIPEMD160_CTX *context"
 .Ft "char *"
 .Fn RIPEMD160_End "RIPEMD160_CTX *context" "char *buf"
@@ -122,6 +122,12 @@ after use.
 If the
 .Fa buf
 argument is non-null it must point to at least 41 characters of buffer space.
+.Sh RETURN VALUES
+.Fn RIPEMD160_Init ,
+.Fn RIPEMD160_Update
+and
+.Fn RIPEMD160_Final
+return 1 for success, 0 otherwise.
 .Sh SEE ALSO
 .Xr md4 3 ,
 .Xr md5 3 ,
